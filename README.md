@@ -572,7 +572,7 @@ Terminal 3: (start the worker)
 
 bob@dylan:~$ npm run start-worker
 ...
-
+New Exercise
 Terminal 2:
 
 bob@dylan:~$ curl 0.0.0.0:5000/connect -H "Authorization: Basic Ym9iQGR5bGFuLmNvbTp0b3RvMTIzNCE=" ; echo ""
