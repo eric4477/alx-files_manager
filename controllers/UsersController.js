@@ -1,3 +1,6 @@
+import { ObjectId } from 'mongodb';
+import redisClient from '../utils/redis';
+
 const crypto = require('crypto');
 const dbClient = require('../utils/db');
 
@@ -37,6 +40,35 @@ class UsersController {
       return res.status(201).json({ id: result.insertedId, email });
     } catch (error) {
       console.error('Error occurred while creating a new user:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  static async getMe(req, res) {
+    // Retrieve the token from the request header
+    const token = req.header('X-Token');
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Fetch the user ID from Redis using the token
+    const userId = await redisClient.get(`auth_${token}`);
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      // Retrieve the user document from the database
+      const user = await dbClient.db.collection('users').findOne({ _id: new ObjectId(userId) });
+
+      if (!user) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      // Return the user's id and email
+      return res.status(200).json({ id: user._id, email: user.email });
+    } catch (error) {
+      console.error('Error fetching user:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }

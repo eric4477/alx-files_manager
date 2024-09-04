@@ -1,6 +1,7 @@
 import express from 'express';
-import AppController from '../controllers/AppController';
-import UsersController from '../controllers/UsersController';
+import AppController from '../AppController';
+import UsersController from '../UsersController';
+import AuthController from '../AuthController';
 
 function controllerRouting(app) {
   const router = express.Router();
@@ -23,6 +24,20 @@ function controllerRouting(app) {
   // should create a new user in DB
   router.post('/users', (req, res) => {
     UsersController.postNew(req, res);
+  });
+
+  // New authentication endpoints
+  router.get('/connect', (req, res) => {
+    AuthController.getConnect(req, res);
+  });
+
+  router.get('/disconnect', (req, res) => {
+    AuthController.getDisconnect(req, res);
+  });
+
+  // User retrieval endpoint
+  router.get('/users/me', (req, res) => {
+    UsersController.getMe(req, res);
   });
 }
 
